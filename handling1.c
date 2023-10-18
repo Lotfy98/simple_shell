@@ -31,38 +31,26 @@ char *_getenv(char *name, char **environ)
  */
 char *_getpath(char *cmd, char **environ)
 {
-	/* Get the system's PATH. */
-	char *path = _getenv("PATH", environ);
-	/* Make a copy of the PATH to tokenize. */
-	char *path_copy = _strdup(path);
-	/* Tokenize the PATH, splitting on colons. */
-	char *dir = _strtok(path_copy, ":");
-	char *file_path;
+	char file_path[MAX_PATH_LENGTH];
+	char *path = _getenv("PATH", environ), *path_copy, *dir;
 
-	/* Iterate over each directory in the PATH. */
+	if (path == NULL)
+		return (NULL);
+	path_copy = _strdup(path);
+	dir = _strtok(path_copy, ":");
 	while (dir != NULL)
 	{
-		/* Allocate space for the file path. */
-		file_path = malloc(_strlen(dir) + _strlen(cmd) + 2);
-		/* Construct the file path. */
 		_strcpy(file_path, dir);
 		_strcat(file_path, "/");
 		_strcat(file_path, cmd);
 
-		/* Check if the file exists and is executable. */
 		if (access(file_path, X_OK) == 0)
 		{
-			/* If it is, clean up and return the file path. */
 			free(path_copy);
-			return (file_path);
+			return (_strdup(file_path));
 		}
-
-		/* If it's not, free the file path and get the next directory. */
-		free(file_path);
 		dir = _strtok(NULL, ":");
 	}
-
-	/* If no executable file was found, clean up and return NULL. */
 	free(path_copy);
 	return (NULL);
 }
