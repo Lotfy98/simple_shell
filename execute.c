@@ -47,7 +47,8 @@ void execute_command(char *cmd, char **args, char **environ)
 	pid_t pid;
 	int i;
 
-	if (access(cmd, X_OK) == -1) {
+	if (access(cmd, X_OK) == -1)
+	{
 		write(STDOUT_FILENO, "Command '", 9);
 		write(STDOUT_FILENO, cmd, strlen(cmd));
 		write(STDOUT_FILENO, "' does not exist.\n", 18);
@@ -55,8 +56,8 @@ void execute_command(char *cmd, char **args, char **environ)
 	}
 	for (i = 0; i < 3; i++)
 	{
-        	pid = fork(); /* Create a child process. */
-	
+		pid = fork(); /* Create a child process. */
+
 		if (pid < 0) /* If fork failed, print an error message and return. */
 		{
 			perror("fork failed");
@@ -93,8 +94,8 @@ void handle_command(char *command, char **environ)
 	char *cmd_path, *cmd, *arg;
 	char *args[64];
 	int i;
-	trimmed_command[_strlen(trimmed_command)] = '\0';
 
+	trimmed_command[_strlen(trimmed_command)] = '\0';
 	if (_strlen(trimmed_command) == 0)
 		return;
 	cmd = _strtok(trimmed_command, " ");
@@ -109,8 +110,7 @@ void handle_command(char *command, char **environ)
 		if (_strcmp(cmd, commands[i].name) == 0)
 		{
 			commands[i].func(args, environ);
-			return;
-		}
+			return; }
 	}
 	if (cmd[0] == '/')
 		execute_command(cmd, args, environ);
@@ -124,9 +124,9 @@ void handle_command(char *command, char **environ)
 			_print("\n");
 			return;
 		}
-		if (cmd_path != NULL) {
+		if (cmd_path != NULL)
+		{
 		execute_command(cmd_path, args, environ);
-		free(cmd_path);
-		}
+		free(cmd_path); }
 	}
 }
