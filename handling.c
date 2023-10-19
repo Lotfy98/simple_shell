@@ -47,26 +47,14 @@ void handle_cd(char **args, char **environ)
  */
 void handle_exit(char **args, char **environ)
 {
-	int status;
-	(void)environ; /* Unused variable. */
-
-
-	status = 0;
-
-	if (args[1] != NULL) /* If exit status is provided, convert to an integer. */
-	{
-		status = _atoi(args[1]);
-	}
-
-	exit(status); /* Exit with the provided status, or 0 if none was provided. */
-	status = 0;
+	int status = 0;
 	(void)environ;
 
 	if (args[1] != NULL)
 		status = _atoi(args[1]);
 	exit(status);
-
 }
+
 /**
  * handle_ls - Executes the ls command in a child process.
  * @args: Null-terminated array of arguments for the command.
