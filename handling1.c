@@ -79,9 +79,10 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	size_t i = 0;
 	size_t old_n;
 	char c;
+	int seen_non_space;
 	char *new_lineptr;
 	(void)stream;
-	int seen_non_space = 0;
+	seen_non_space = 0;
 	if (!lineptr || !n)
 		return (-1);
 
@@ -113,6 +114,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		{
 			(*lineptr)[i++] = c;
 		}
+	}
 	(*lineptr)[i] = '\0';
 	return (i);
 }
