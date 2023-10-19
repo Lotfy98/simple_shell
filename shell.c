@@ -8,6 +8,7 @@
  *
  * Return: 0 on success, 1 on failure.
  */
+
 int main(int argc, char **argv, char **environ)
 {
 	char command[MAX_COMMAND_LENGTH]; /* Command buffer. */
@@ -20,10 +21,11 @@ int main(int argc, char **argv, char **environ)
 	if (!isatty(STDIN_FILENO))
 	{ /* If input is not from a terminal... */
 		/* Read lines until EOF. */
-		while ((nread = getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			if (nread == 0)
 				break;
+
 			strcpy(command, line); /* Copy the line. */
 			handle_command(command, environ); /* Handle the command. */
 			free(line); /* Free the memory allocated by getline. */
@@ -37,7 +39,7 @@ int main(int argc, char **argv, char **environ)
 		printf("Shell Prompt: "); /* Print the shell prompt. */
 		fflush(stdout); /* Flush the output buffer. */
 		/* Read lines until EOF. */
-		while ((nread = getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			strcpy(command, line); /* Copy the line to the command buffer. */
 			handle_command(command, environ); /* Handle the command. */
@@ -48,6 +50,5 @@ int main(int argc, char **argv, char **environ)
 		}
 	}
 	free(line); /* Free any remaining memory at the end of the program. */
-
 	return (0); /* Return success status. */
 }
