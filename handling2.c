@@ -79,8 +79,5 @@ char *_strdup(char *str)
  */
 void handle_cp(char **args, char **environ)
 {
-	char *cmd_path = "/bin/cp";
-	(void)args;
-	(void)environ;
-	execute_command(cmd_path, args, environ);
+	    execute_command("/bin/cp", args, environ);
 }

@@ -12,8 +12,8 @@ void handle_env(char **args, char **environ)
 
 	while (*environ != NULL)
 	{
-		write(1, *environ, strlen(*environ));
-		write(1, "\n", 1);
+		write(1, *environ, _strlen(*environ));
+		write(1, "\n", _strlen("\n"));
 		environ++;
 	}
 }
@@ -45,35 +45,35 @@ Command *getCommand()
  */
 void execute_command(char *cmd, char **args, char **environ)
 {
-	pid_t pid;
-	int status;
+    pid_t pid;
+    int status;
 
-	if (access(cmd, X_OK) == -1)
-	{
-		write(STDOUT_FILENO, "Command '", 9);
-		write(STDOUT_FILENO, cmd, _strlen(cmd));
-		write(STDOUT_FILENO, "' does not exist.\n", 18);
-		return;
-	}
+    if (access(cmd, X_OK) == -1)
+    {
+        write(STDOUT_FILENO, "Command '", 9);
+        write(STDOUT_FILENO, cmd, _strlen(cmd));
+        write(STDOUT_FILENO, "' does not exist.\n", 18);
+        return;
+    }
 
-	pid = fork(); /* Create a child process. */
+    pid = fork(); /* Create a child process. */
 
-	if (pid < 0) /* If fork failed, print an error message and return. */
-	{
-		perror("fork failed");
-		return;
-	}
-	else if (pid == 0) /* If this is the child process, execute the command. */
-	{
-		execve(cmd, args, environ);
-		/* If execve returns, it must have failed. */
-		perror("execve failed");
-		exit(1); /* Exit with a failure status. */
-	}
-	else /* This is the parent process. Wait for the child to finish. */
-	{
-		wait(&status);
-	}
+    if (pid < 0) /* If fork failed, print an error message and return. */
+    {
+        perror("fork failed");
+        return;
+    }
+    else if (pid == 0) /* If this is the child process, execute the command. */
+    {
+        execve(cmd, args, environ);
+        /* If execve returns, it must have failed. */
+        perror("execve failed");
+        exit(1); /* Exit with a failure status. */
+    }
+    else /* This is the parent process. Wait for the child to finish. */
+    {
+        wait(&status);
+    }
 }
 /**
  * handle_command - Function to handle commands
@@ -92,44 +92,43 @@ i* This function handles a given command. It trims the command,
  */
 void handle_command(char *command, char **environ)
 {
-	Command *commands;
-	char *trimmed_command = trim(command);
-	char *cmd_path, *cmd, *arg;
-	char *args[64];
-	int i;
+    Command *commands;
+    char *trimmed_command = trim(command); /* Trim leading and trailing spaces*/
+    char *cmd_path, *cmd, *arg;
+    char *args[64];
+    int i;
+    trimmed_command[_strlen(trimmed_command)] = '\0';
 
-	trimmed_command[_strlen(trimmed_command)] = '\0';
-	if (_strlen(trimmed_command) == 0)
-		return;
-	cmd = _strtok(trimmed_command, " \t\n");
-	args[0] = cmd;
-	i = 1;
-	while ((arg = _strtok(NULL, " \t\n")) != NULL)
-		args[i++] = arg;
-	args[i] = NULL;
-	commands = getCommand();
-	for (i = 0; commands[i].name != NULL; i++)
-	{
-		if (_strcmp(cmd, commands[i].name) == 0)
-		{
-			commands[i].func(args, environ);
-			return; }
-	}
-	if (cmd[0] == '/')
-		execute_command(cmd, args, environ);
-	else
-	{
-		cmd_path = _getpath(cmd, environ);
-		if (cmd_path == NULL)
-		{
-			_print("Command not found: ");
-			_print(cmd);
-			_print("\n");
-			return;
-		}
-		if (cmd_path != NULL)
-		{
-		execute_command(cmd_path, args, environ);
-		free(cmd_path); }
-	}
+    if (_strlen(trimmed_command) == 0)
+        return;
+    cmd = _strtok(trimmed_command, " \t\n"); /* Use whitespace as delimiter*/
+    args[0] = cmd;
+    i = 1;
+    while ((arg = _strtok(NULL, " \t\n")) != NULL) /* Use whitespace as delimiter*/
+        args[i++] = arg;
+    args[i] = NULL; /* Properly terminate the args array*/
+    commands = getCommand();
+    for (i = 0; commands[i].name != NULL; i++)
+    {
+        if (_strcmp(cmd, commands[i].name) == 0)
+        {
+            commands[i].func(args, environ);
+            return;
+        }
+    }
+    if (cmd[0] == '/')
+        execute_command(cmd, args, environ);
+    else
+    {
+        cmd_path = _getpath(cmd, environ);
+        if (cmd_path == NULL)
+        {
+            _print("Command not found: ");
+            _print(cmd);
+            _print("\n");
+            return;
+        }
+        execute_command(cmd_path, args, environ); /* Execute the command with cmd_path*/
+        free(cmd_path); /* Free cmd_path to prevent memory leaks*/
+    }
 }

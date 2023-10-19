@@ -30,13 +30,10 @@ void handle_cd(char **args, char **environ)
 
 	(void)environ; /* Unused variable. */
 
-	if (chdir(args[1]) != 0) /*If changing directory fails, print error message */
-
-		(void)environ;
-
-	if (chdir(args[1]) != 0)
-
+	if (chdir(args[1]) != 0) /*If changing directory fails, print error message*/
+	{
 		perror("cd failed");
+	}
 }
 /**
  * handle_exit - Exits the shell.
@@ -64,43 +61,26 @@ void handle_exit(char **args, char **environ)
  */
 void handle_ls(char **args, char **environ)
 {
+    pid_t pid;
 
-	pid_t pid;
+    pid = fork(); /* Create a child process. */
+    if (pid < 0) /* If fork failed, print an error message and return. */
+    {
+        perror("fork failed");
+        return;
+    }
 
-	pid = fork(); /* Create a child process. */
-	if (pid < 0) /* If fork failed, print an error message and return. */
+    if (pid == 0) /* If this is the child process, execute the ls command. */
+    {
+        execve("/bin/ls", args, environ);
 
-		pid = fork();
+        /* If execve returns, it must have failed. */
+        perror("execve failed");
 
-	if (pid < 0)
-
-	{
-		perror("fork failed");
-		return;
-	}
-
-
-	if (pid == 0) /* If this is the child process, execute the ls command. */
-	{
-		execve("/bin/ls", args, environ);
-
-		/* If execve returns, it must have failed. */
-		perror("execve failed");
-
-		exit(1); /* Exit with a failure status. */
-	}
-	else /* This is the parent process. Wait for the child to finish. */
-	{
-		wait(NULL);
-	}
-
-	if (pid == 0)
-	{
-		execve("/bin/ls", args, environ);
-		perror("execve failed");
-		exit(1);
-	}
-	else
-		wait(NULL);
-
+        exit(1); /* Exit with a failure status. */
+    }
+    else /* This is the parent process. Wait for the child to finish. */
+    {
+        wait(NULL);
+    }
 }

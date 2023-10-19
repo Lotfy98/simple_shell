@@ -26,7 +26,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 char *_strdup(char *str);
 int _strlen(char *s);
 int _strncmp(const char *str1, const char *str2, size_t n);
-char *_strcpy(char *dest, char *src);
+char* _strcpy(char* dest, const char* src);
 char *_strcat(char *dest, char *src);
 char _getchar(FILE *stream);
 int _atoi(char *s);
