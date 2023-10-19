@@ -161,7 +161,19 @@ int _atoi(char *s)
 char _getchar(void)
 {
 	char c;
-
-	read(STDIN_FILENO, &c, 1);
+	ssize_t bytesRead;
+	bytesRead = read(STDIN_FILENO, &c, 1);
+	if (bytesRead < 0)
+	{
+		perror("read");
+		return -1;
+	}
+	else if (bytesRead == 0)
+	{
+		return EOF;
+	}
+	else 
+	{
 	return (c);
+	}
 }

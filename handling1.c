@@ -116,7 +116,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			(*lineptr)[i++] = c;
 		}
 	}
-	while (i > 0 && ((*lineptr)[i - 1] == " " || (*lineptr)[i - 1] == "\t"))
+	while (i > 0 && ((*lineptr)[i - 1] == ' ' || (*lineptr)[i - 1] == '\t'))
 		i--;
 	(*lineptr)[i] = '\0';
 	return (i);
