@@ -44,12 +44,13 @@ Command *getCommand()
  */
 void execute_command(char *cmd, char **args, char **environ)
 {
+	pid_t pid;
 	if (access(cmd, X_OK) == -1) {
 		printf("Command '%s' does not exist.\n", cmd);
 		return;
 	}
-
-	pid_t pid = fork(); /* Create a child process. */
+	
+	pid = fork(); /* Create a child process. */
 
 	if (pid < 0) /* If fork failed, print an error message and return. */
 	{
