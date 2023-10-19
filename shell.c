@@ -17,33 +17,33 @@ int main(int argc, char **argv, char **environ)
 	(void)argc; /* Unused variable. */
 	(void)argv; /* Unused variable. */
 
-	if (!isatty(STDIN_FILENO)) /* If input is not from a terminal... */
-	{
+	if (!isatty(STDIN_FILENO))
+	{ /* If input is not from a terminal... */
 		/* Read lines until EOF. */
-		while ((nread = _getline(&line, &len, stdin)) != -1)
+		while ((nread = getline(&line, &len, stdin)) != -1)
 		{
 			if (nread == 0)
 				break;
-
-			_strcpy(command, line); /* Copy the line */
+			strcpy(command, line); /* Copy the line. */
 			handle_command(command, environ); /* Handle the command. */
-			free(line); /* Free the memory allocated by _getline. */
+			free(line); /* Free the memory allocated by getline. */
 			line = NULL; /* Prevent dangling pointers. */
+			break; /* Exit the loop after executing the command. */
 		}
 	}
-	else /* If input is from a terminal... */
-	{
+	else
+	{ /* If input is from a terminal... */
 		signal(SIGINT, handle_sigint); /* Handle SIGINT signal (Ctrl+C). */
-		_print(SHELL_PROMPT); /* Print the shell prompt. */
+		printf("Shell Prompt: "); /* Print the shell prompt. */
 		fflush(stdout); /* Flush the output buffer. */
 		/* Read lines until EOF. */
-		while ((nread = _getline(&line, &len, stdin)) != -1)
+		while ((nread = getline(&line, &len, stdin)) != -1)
 		{
-			_strcpy(command, line); /* Copy the line to the command buffer. */
+			strcpy(command, line); /* Copy the line to the command buffer. */
 			handle_command(command, environ); /* Handle the command. */
-			_print(SHELL_PROMPT); /* Print the shell prompt. */
+			printf("Shell Prompt: "); /* Print the shell prompt. */
 			fflush(stdout); /* Flush the output buffer. */
-			free(line); /* Free the memory allocated by _getline. */
+			free(line); /* Free the memory allocated by getline. */
 			line = NULL; /* Reset the pointer to NULL to prevent dangling pointers. */
 		}
 	}
