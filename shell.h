@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 #include <ctype.h>
 #include <signal.h>
-
+#define MAX_ARGS 1024
 #define MAX_PATH_LENGTH 256
 #define MAX_COMMAND_LENGTH 1024
 #define SHELL_PROMPT "($) "
