@@ -92,43 +92,59 @@ i* This function handles a given command. It trims the command,
  */
 void handle_command(char *command, char **environ)
 {
-    Command *commands;
-    char *trimmed_command = trim(command); /* Trim leading and trailing spaces*/
-    char *cmd_path, *cmd, *arg;
-    char *args[64];
-    int i;
-    trimmed_command[_strlen(trimmed_command)] = '\0';
+	Command *commands;
+	char *trimmed_command = trim(command); /* Trim leading and trailing spaces */
+	char *cmd_path, *cmd, *arg;
+	char **args = malloc(MAX_ARGS * sizeof(char*)); /* Dynamically allocate memory for args */
+	int i = 0;
 
-    if (_strlen(trimmed_command) == 0)
-        return;
-    cmd = _strtok(trimmed_command, " \t\n"); /* Use whitespace as delimiter*/
-    args[0] = cmd;
-    i = 1;
-    while ((arg = _strtok(NULL, " \t\n")) != NULL) /* Use whitespace as delimiter*/
-        args[i++] = arg;
-    args[i] = NULL; /* Properly terminate the args array*/
-    commands = getCommand();
-    for (i = 0; commands[i].name != NULL; i++)
-    {
-        if (_strcmp(cmd, commands[i].name) == 0)
-        {
-            commands[i].func(args, environ);
-            return;
-        }
-    }
-    if (cmd[0] == '/')
-        execute_command(cmd, args, environ);
-    else
-    {
-        cmd_path = _getpath(cmd, environ);
-        if (cmd_path == NULL)
-        {
-            _print("Command not found: ");
-            _print(cmd);
-            _print("\n");
-            return;
-        }
-        execute_command(cmd_path, args, environ); /* Execute the command with cmd_path*/
-        free(cmd_path); /* Free cmd_path to prevent memory leaks*/
-    }
+	trimmed_command[_strlen(trimmed_command)] = '\0';
+
+	if (_strlen(trimmed_command) == 0) {
+		free(args); /* Free the dynamically allocated memory */
+		return;
+	}
+
+	cmd = _strtok(trimmed_command, " \t\n"); /* Use whitespace as delimiter */
+	args[i++] = cmd;
+
+	while ((arg = _strtok(NULL, " \t\n")) != NULL) { /* Use whitespace as delimiter */
+		args[i] = malloc((strlen(arg) + 1) * sizeof(char)); /* Dynamically allocate memory for each argument */
+		strcpy(args[i], arg);
+		i++;
+	}
+
+	args[i] = NULL; /* Properly terminate the args array */
+
+	commands = getCommand();
+
+	for (i = 0; commands[i].name != NULL; i++) {
+		if (_strcmp(cmd, commands[i].name) == 0) {
+			commands[i].func(args, environ);
+			free(args); /* Free the dynamically allocated memory */
+			return;
+		}
+	}
+
+	if (cmd[0] == '/')
+		execute_command(cmd, args, environ);
+	else {
+		cmd_path = _getpath(cmd, environ);
+		if (cmd_path == NULL) {
+			_print("Command not found: ");
+			_print(cmd);
+			_print("\n");
+			free(args); /* Free the dynamically allocated memory */
+			return;
+		}
+		execute_command(cmd_path, args, environ); /* Execute the command with cmd_path */
+		free(cmd_path); /* Free cmd_path to prevent memory leaks */
+	}
+
+	/* Free the dynamically allocated memory for each argument */
+	for (i = 1; args[i] != NULL; i++) {
+		free(args[i]);
+	}
+
+	free(args); /* Free the dynamically allocated memory */
 }

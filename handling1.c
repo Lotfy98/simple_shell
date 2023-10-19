@@ -8,17 +8,7 @@
  */
 char *_getenv(char *name, char **environ)
 {
-	size_t len;
-
-	/* Check the input arguments */
-	if (name == NULL || environ == NULL)
-		return (NULL);
-
-	len = _strlen(name); /* Get the length of the name. */
-
-	/* Check for null bytes in name */
-	if (memchr(name, '\0', len) != NULL)
-		return (NULL);
+	size_t len = _strlen(name); /* Get the length of the name. */
 
 	/* Iterate through the environment variables. */
 	while (*environ != NULL)
