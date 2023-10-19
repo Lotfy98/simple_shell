@@ -43,6 +43,7 @@ char *_getpath(char *cmd, char **environ)
 		_strcpy(file_path, dir);
 		_strcat(file_path, "/");
 		_strcat(file_path, cmd);
+		file_path[_strlen(file_path)] = '\0';
 
 		if (access(file_path, X_OK) == 0)
 		{
@@ -80,11 +81,15 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	char c;
 	char *new_lineptr;
 	(void)stream;
+	if (!lineptr || !n)
+		return (-1);
 
-	if (*lineptr == NULL)
+	if (*lineptr == NULL || *n == 0)
 	{
 		*lineptr = malloc(MAX_COMMAND_LENGTH);
 		*n = MAX_COMMAND_LENGTH;
+		if (*lineptr == NULL)
+			return (-1);
 	}
 	while ((c = _getchar()) != '\n')
 	{
@@ -94,7 +99,9 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			*n *= 2;
 			new_lineptr = _realloc(*lineptr, old_n, *n);
 			if (new_lineptr == NULL)
-				return (-1);
+				free(*lineptr);
+			*lineptr = NULL;
+			return (-1);
 			*lineptr = new_lineptr;
 		}
 		(*lineptr)[i++] = c;
@@ -102,4 +109,3 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	(*lineptr)[i] = '\0';
 	return (i);
 }
-

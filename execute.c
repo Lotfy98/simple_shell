@@ -83,6 +83,7 @@ void handle_command(char *command, char **environ)
 	char *cmd_path, *cmd, *arg;
 	char *args[64];
 	int i;
+	trimmed_command[_strlen(trimmed_command)] = '\0';
 
 	if (_strlen(trimmed_command) == 0)
 		return;
@@ -113,7 +114,9 @@ void handle_command(char *command, char **environ)
 			_print("\n");
 			return;
 		}
+		if (cmd_path != NULL) {
 		execute_command(cmd_path, args, environ);
 		free(cmd_path);
+		}
 	}
 }
