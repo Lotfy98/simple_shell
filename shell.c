@@ -30,7 +30,7 @@ int main(int argc, char **argv, char **environ)
 			handle_command(command, environ); /* Handle the command. */
 			free(line); /* Free the memory allocated by getline. */
 			line = NULL; /* Prevent dangling pointers. */
-		/*	break;*/ /* Exit the loop after executing the command. */
+			break; /* Exit the loop after executing the command. */
 		}
 	}
 	else
