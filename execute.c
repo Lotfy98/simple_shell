@@ -45,6 +45,7 @@ Command *getCommand()
 void execute_command(char *cmd, char **args, char **environ)
 {
 	pid_t pid;
+	int i;
 
 	if (access(cmd, X_OK) == -1) {
 		write(STDOUT_FILENO, "Command '", 9);
@@ -52,20 +53,22 @@ void execute_command(char *cmd, char **args, char **environ)
 		write(STDOUT_FILENO, "' does not exist.\n", 18);
 		return;
 	}
-
-	pid = fork(); /* Create a child process. */
-
-	if (pid < 0) /* If fork failed, print an error message and return. */
+	for (i = 0; i < 3; i++)
 	{
-		perror("fork failed");
-		return;
-	}
-	if (pid == 0) /* If this is the child process, execute the command. */
-	{
-		execve(cmd, args, environ);
-		/* If execve returns, it must have failed. */
-		perror("execve failed");
-		exit(1); /* Exit with a failure status. */
+        	pid = fork(); /* Create a child process. */
+	
+		if (pid < 0) /* If fork failed, print an error message and return. */
+		{
+			perror("fork failed");
+			return;
+		}
+		if (pid == 0) /* If this is the child process, execute the command. */
+		{
+			execve(cmd, args, environ);
+			/* If execve returns, it must have failed. */
+			perror("execve failed");
+			exit(1); /* Exit with a failure status. */
+		}
 	}
 }
 /**
