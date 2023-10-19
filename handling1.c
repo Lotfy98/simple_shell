@@ -76,30 +76,29 @@ int _isspace(char c)
  */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
-size_t i = 0;
-size_t old_n;
-char c;
-char *new_lineptr;
-(void)stream;
+	size_t i = 0;
+	size_t old_n;
+	char c;
+	char *new_lineptr;
 
-if (*lineptr == NULL)
-{
-*lineptr = malloc(MAX_COMMAND_LENGTH);
-*n = MAX_COMMAND_LENGTH;
-}
-while ((c = _getchar()) != '\n')
-{
-if (i >= *n - 1)
-{
-old_n = *n;
-*n *= 2;
-new_lineptr = _realloc(*lineptr, old_n, *n);
-if (new_lineptr == NULL)
-return (-1);
-*lineptr = new_lineptr;
-}
-(*lineptr)[i++] = c;
-}
-(*lineptr)[i] = '\0';
-return (i);
+	if (*lineptr == NULL)
+	{
+		*lineptr = malloc(MAX_COMMAND_LENGTH);
+		*n = MAX_COMMAND_LENGTH;
+	}
+	while ((c = _getchar(stream)) != '\n')
+	{
+		if (i >= *n - 1)
+		{
+			old_n = *n;
+			*n *= 2;
+			new_lineptr = _realloc(*lineptr, old_n, *n);
+			if (new_lineptr == NULL)
+				return (-1);
+			*lineptr = new_lineptr;
+		}
+		(*lineptr)[i++] = c;
+	}
+	(*lineptr)[i] = '\0';
+	return (i);
 }
