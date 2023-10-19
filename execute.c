@@ -45,11 +45,14 @@ Command *getCommand()
 void execute_command(char *cmd, char **args, char **environ)
 {
 	pid_t pid;
+
 	if (access(cmd, X_OK) == -1) {
-		printf("Command '%s' does not exist.\n", cmd);
+		write(STDOUT_FILENO, "Command '", 9);
+		write(STDOUT_FILENO, cmd, strlen(cmd));
+		write(STDOUT_FILENO, "' does not exist.\n", 18);
 		return;
 	}
-	
+
 	pid = fork(); /* Create a child process. */
 
 	if (pid < 0) /* If fork failed, print an error message and return. */
@@ -64,8 +67,6 @@ void execute_command(char *cmd, char **args, char **environ)
 		perror("execve failed");
 		exit(1); /* Exit with a failure status. */
 	}
-	else /* This is the parent process. Wait for the child to finish. */
-		wait(NULL);
 }
 /**
  * handle_command - Function to handle commands
