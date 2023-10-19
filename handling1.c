@@ -101,9 +101,10 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			*n *= 2;
 			new_lineptr = _realloc(*lineptr, old_n, *n);
 			if (new_lineptr == NULL)
+			{
 				free(*lineptr);
-			*lineptr = NULL;
-			return (-1);
+				return (-1);
+			}
 			*lineptr = new_lineptr;
 		}
 		if (c != ' ' && c != '\t')
@@ -115,6 +116,9 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			(*lineptr)[i++] = c;
 		}
 	}
+	whle (i > 0 && ((*lineptr)[i - 1] == " " || (*lineptr)[i - 1] == "\t"))
+		i--;
+
 	(*lineptr)[i] = '\0';
 	return (i);
 }
