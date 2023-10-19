@@ -82,6 +82,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	int seen_non_space;
 	char *new_lineptr;
 	(void)stream;
+
 	seen_non_space = 0;
 	if (!lineptr || !n)
 		return (-1);
@@ -99,11 +100,14 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		{
 			old_n = *n;
 			*n *= 2;
+			if (*n < old_n)
+				return (-1);
 			new_lineptr = _realloc(*lineptr, old_n, *n);
 			if (new_lineptr == NULL)
+			{
 				free(*lineptr);
-			*lineptr = NULL;
-			return (-1);
+				return (-1);
+			}
 			*lineptr = new_lineptr;
 		}
 		if (c != ' ' && c != '\t')
