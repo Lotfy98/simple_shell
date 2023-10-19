@@ -69,3 +69,18 @@ char *_strdup(char *str)
 	_memcpy(xx, str, x);
 	return (xx);
 }
+/**
+ * handle_cp - Function to handle the cp command
+ * @args: An array of arguments for the cp command
+ * @environ: The environment variables
+ *
+ * This function handles the cp command. It uses execve to execute
+ *the cp command with the provided arguments and environment variables.
+ */
+void handle_cp(char **args, char **environ)
+{
+	char *cmd_path = "/bin/cp";
+	(void)args;
+	(void)environ;
+	execute_command(cmd_path, args, environ);
+}

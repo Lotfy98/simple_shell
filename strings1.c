@@ -158,10 +158,11 @@ int _atoi(char *s)
  *
  * Return: the character read from the standard input
  */
-char _getchar(void)
+char _getchar(FILE *stream)
 {
 	char c;
 	ssize_t bytesRead;
+	(void)stream;
 
 	bytesRead = read(STDIN_FILENO, &c, 1);
 	if (bytesRead < 0)

@@ -16,7 +16,7 @@
 #define SHELL_PROMPT "($) "
 
 
-
+void handle_cp(char **args, char **environ);
 void _print(char *str);
 void handle_sigint(int sig);
 void handle_cd(char **arg, char **environ);
@@ -28,7 +28,7 @@ int _strlen(char *s);
 int _strncmp(const char *str1, const char *str2, size_t n);
 char *_strcpy(char *dest, char *src);
 char *_strcat(char *dest, char *src);
-char _getchar(void);
+char _getchar(FILE *stream);
 int _atoi(char *s);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char *_strtok(char *str, const char *delimiters);
@@ -42,6 +42,7 @@ char *trim(char *str);
 int _isspace(char c);
 void execute_command(char *cmd, char **arg, char **environ);
 void handle_env(char **args, char **environ);
+void handle_cp(char *args[], char **environ);
 
 /**
  * struct Command - Defines a command and its corresponding function
@@ -51,7 +52,7 @@ void handle_env(char **args, char **environ);
 typedef struct Command
 {
 	char *name;
-	void (*func)(char *args[], char **environ);
+	void (*func)(char **args, char **environ);
 } Command;
 
 

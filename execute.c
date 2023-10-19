@@ -27,6 +27,7 @@ Command *getCommand()
 	/* Define a static array of Command structs. */
 	static Command commands[] = {
 		{"ls", handle_ls}, /* ls command */
+		{"cp", handle_cp}, /* cp command */
 		{"cd", handle_cd}, /* cd command */
 		{"exit", handle_exit}, /* exit command */
 		{"env", handle_env}, /* env command */
@@ -45,31 +46,33 @@ Command *getCommand()
 void execute_command(char *cmd, char **args, char **environ)
 {
 	pid_t pid;
-	int i;
+	int status;
 
 	if (access(cmd, X_OK) == -1)
 	{
 		write(STDOUT_FILENO, "Command '", 9);
-		write(STDOUT_FILENO, cmd, strlen(cmd));
+		write(STDOUT_FILENO, cmd, _strlen(cmd));
 		write(STDOUT_FILENO, "' does not exist.\n", 18);
 		return;
 	}
-	for (i = 0; i < 3; i++)
-	{
-		pid = fork(); /* Create a child process. */
 
-		if (pid < 0) /* If fork failed, print an error message and return. */
-		{
-			perror("fork failed");
-			return;
-		}
-		if (pid == 0) /* If this is the child process, execute the command. */
-		{
-			execve(cmd, args, environ);
-			/* If execve returns, it must have failed. */
-			perror("execve failed");
-			exit(1); /* Exit with a failure status. */
-		}
+	pid = fork(); /* Create a child process. */
+
+	if (pid < 0) /* If fork failed, print an error message and return. */
+	{
+		perror("fork failed");
+		return;
+	}
+	else if (pid == 0) /* If this is the child process, execute the command. */
+	{
+		execve(cmd, args, environ);
+		/* If execve returns, it must have failed. */
+		perror("execve failed");
+		exit(1); /* Exit with a failure status. */
+	}
+	else /* This is the parent process. Wait for the child to finish. */
+	{
+		wait(&status);
 	}
 }
 /**
@@ -98,10 +101,10 @@ void handle_command(char *command, char **environ)
 	trimmed_command[_strlen(trimmed_command)] = '\0';
 	if (_strlen(trimmed_command) == 0)
 		return;
-	cmd = _strtok(trimmed_command, " ");
+	cmd = _strtok(trimmed_command, " \t\n");
 	args[0] = cmd;
 	i = 1;
-	while ((arg = _strtok(NULL, " ")) != NULL)
+	while ((arg = _strtok(NULL, " \t\n")) != NULL)
 		args[i++] = arg;
 	args[i] = NULL;
 	commands = getCommand();
