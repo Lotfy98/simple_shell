@@ -44,6 +44,11 @@ Command *getCommand()
  */
 void execute_command(char *cmd, char **args, char **environ)
 {
+	if (access(cmd, X_OK) == -1) {
+		printf("Command '%s' does not exist.\n", cmd);
+		return;
+	}
+
 	pid_t pid = fork(); /* Create a child process. */
 
 	if (pid < 0) /* If fork failed, print an error message and return. */
@@ -66,7 +71,7 @@ void execute_command(char *cmd, char **args, char **environ)
  * @command: The command to handle
  * @environ: The environment variables
  *
- * This function handles a given command. It trims the command,
+i* This function handles a given command. It trims the command,
  *checks if it's empty,and splits it into cmd and args.
  * It then loops through the commands array to find a match.
  * If a match is found, it executes the associated function.
