@@ -47,7 +47,6 @@ int main(int argc, char **argv, char **environ)
 			fflush(stdout); /* Flush the output buffer. */
 			free(line); /* Free the memory allocated by getline. */
 			line = NULL; /* Reset the pointer to NULL to prevent dangling pointers. */
-			free(line);
 		}
 	}
 	free(line); /* Free any remaining memory at the end of the program. */

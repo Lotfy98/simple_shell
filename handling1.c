@@ -6,10 +6,19 @@
  *
  * Return: The value of the environment variable, or NULL if not found.
  */
-
 char *_getenv(char *name, char **environ)
 {
-	size_t len = _strlen(name); /* Get the length of the name. */
+	size_t len;
+
+	/* Check the input arguments */
+	if (name == NULL || environ == NULL)
+		return (NULL);
+
+	len = _strlen(name); /* Get the length of the name. */
+
+	/* Check for null bytes in name */
+	if (memchr(name, '\0', len) != NULL)
+		return (NULL);
 
 	/* Iterate through the environment variables. */
 	while (*environ != NULL)
