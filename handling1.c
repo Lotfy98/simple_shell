@@ -76,48 +76,30 @@ int _isspace(char c)
  */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
-	size_t i = 0;
-	size_t old_n;
-	char c;
-	int seen_non_space;
-	char *new_lineptr;
-	(void)stream;
-	seen_non_space = 0;
-	if (!lineptr || !n)
-		return (-1);
+size_t i = 0;
+size_t old_n;
+char c;
+char *new_lineptr;
+(void)stream;
 
-	if (*lineptr == NULL || *n == 0)
-	{
-		*lineptr = malloc(MAX_COMMAND_LENGTH);
-		*n = MAX_COMMAND_LENGTH;
-		if (*lineptr == NULL)
-			return (-1);
-	}
-	while ((c = _getchar()) != '\n')
-	{
-		if (i >= *n - 1)
-		{
-			old_n = *n;
-			*n *= 2;
-			new_lineptr = _realloc(*lineptr, old_n, *n);
-			if (new_lineptr == NULL)
-			{
-				free(*lineptr);
-				return (-1);
-			}
-			*lineptr = new_lineptr;
-		}
-		if (c != ' ' && c != '\t')
-		{
-			seen_non_space = 1;
-		}
-		if (seen_non_space)
-		{
-			(*lineptr)[i++] = c;
-		}
-	}
-	while (i > 0 && ((*lineptr)[i - 1] == ' ' || (*lineptr)[i - 1] == '\t'))
-		i--;
-	(*lineptr)[i] = '\0';
-	return (i);
+if (*lineptr == NULL)
+{
+*lineptr = malloc(MAX_COMMAND_LENGTH);
+*n = MAX_COMMAND_LENGTH;
+}
+while ((c = _getchar()) != '\n')
+{
+if (i >= *n - 1)
+{
+old_n = *n;
+*n *= 2;
+new_lineptr = _realloc(*lineptr, old_n, *n);
+if (new_lineptr == NULL)
+return (-1);
+*lineptr = new_lineptr;
+}
+(*lineptr)[i++] = c;
+}
+(*lineptr)[i] = '\0';
+return (i);
 }
