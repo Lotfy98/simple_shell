@@ -63,7 +63,7 @@ char *_strdup(char *str)
 	xx = malloc(x);
 	if (xx == NULL)
 	{
-		free(xx);
+	/*	free(xx);*/
 		return (NULL);
 	}
 	_memcpy(xx, str, x);
