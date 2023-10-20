@@ -77,31 +77,35 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	size_t i, old_n;
 	char c, *new_lineptr;
+	int skip_spaces;
 
 	if (*lineptr == NULL)
 	{
 		*lineptr = malloc(MAX_COMMAND_LENGTH);
-		*n = MAX_COMMAND_LENGTH;
-	}
+		*n = MAX_COMMAND_LENGTH; }
 	i = 0;
-	while ((c = _getchar(stream)) != '\n')
+	skip_spaces = 1;
+	while ((c = _getchar(stream)) != '\n') 
 	{
-		if (i >= *n - 1)
-		{
+		if (i >= *n - 1) {
 			old_n = *n;
 			*n *= 2;
 			new_lineptr = _realloc(*lineptr, old_n, *n);
-			if (new_lineptr == NULL)
+			if (new_lineptr == NULL) 
 			{
 				free(*lineptr);
-				return (-1);
-			}
+				return (-1); }
 			*lineptr = new_lineptr;
 		}
+		if (skip_spaces && c == ' ') 
+			continue;
+		else
+			skip_spaces = 0;
 		(*lineptr)[i++] = c;
 	}
+	while (i > 0 && (*lineptr)[i - 1] == ' ') 
+		i--;
 
 	(*lineptr)[i] = '\0';
-
-	return (i);
+	return ((ssize_t)i);
 }

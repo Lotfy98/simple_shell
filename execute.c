@@ -43,7 +43,7 @@ Command *getCommand()
  *
  * Return: Void.
  */
-void execute_command(char *cmd, char **args, char **environ)
+/*void execute_command(char *cmd, char **args, char **environ)
 {
 	pid_t pid;
 	int status;
@@ -55,22 +55,21 @@ void execute_command(char *cmd, char **args, char **environ)
 		write(STDOUT_FILENO, "' does not exist.\n", 18);
 		return;
 	}
-	pid = fork(); /* Create a child process. */
-	if (pid < 0) /* If fork failed, print an error message and return. */
+	pid = fork();
+	if (pid < 0)
 	{
 		perror("fork failed");
 		return;
 	}
-	else if (pid == 0) /* If this is the child process, execute the command. */
+	else if (pid == 0)
 	{
 		execve(cmd, args, environ);
-		/* If execve returns, it must have failed. */
 		perror("execve failed");
-		exit(1); /* Exit with a failure status. */
+		exit(1);
 	}
 	else
 		wait(&status);
-}
+}*/
 /**
  * handle_command - Function to handle commands
  * @command: The command to handle
@@ -88,44 +87,61 @@ i* This function handles a given command. It trims the command,
  */
 void handle_command(char *command, char **environ)
 {
-	Command *commands;
-	char *trimmed_command = trim(command); /* Trim leading and trailing spaces */
-	char *cmd_path, *cmd = NULL;
-	char **args;
+	pid_t pid;
+	Command *commands = getCommand();
+	char *trimmed_command = trim(command);
+	char *cmd, *arg, *cmd_path;
 	int i;
 
-	trimmed_command[_strlen(trimmed_command)] = '\0';
-	while (cmd == NULL && _strlen(trimmed_command) > 0)
-	{
-		cmd = _strtok(trimmed_command, " \t\n");
-		trimmed_command = trimmed_command + _strlen(cmd) + 1;
-	}
-	if (cmd == NULL)
+	if (_strlen(trimmed_command) == 0)
 		return;
-	args = parse_args(cmd);
-	commands = getCommand();
+	cmd = _strtok(trimmed_command, " ");
+	arg = _strtok(NULL, " ");
 	for (i = 0; commands[i].name != NULL; i++)
 	{
 		if (_strcmp(cmd, commands[i].name) == 0)
 		{
-			commands[i].func(args, environ);
-			free_args(args); /* Free the dynamically allocated memory */
-			return;
-		}
+			commands[i].func(&arg, environ);
+			return; }
 	}
 	if (cmd[0] == '/')
-		execute_command(cmd, args, environ);
+	{ pid = fork();
+		if (pid < 0)
+		{
+			perror("fork failed");
+			return; }
+		if (pid == 0)
+		{
+			char *argv[] = {cmd, arg, NULL};
+			execve(cmd, argv, environ);
+			perror("execve failed");
+			exit(1); }
+		else
+			wait(NULL);
+	}
 	else
-	{ cmd_path = _getpath(cmd, environ);
+	{
+		cmd_path = _getpath(cmd);
 		if (cmd_path == NULL)
 		{
 			_print("Command not found: ");
 			_print(cmd);
 			_print("\n");
-			free_args(args); /* Free the dynamically allocated memory */
+			return;
+		}
+		pid = fork();
+		if (pid < 0)
+		{
+			perror("fork failed");
 			return; }
-		execute_command(cmd_path, args, environ);
+		if (pid == 0)
+		{
+			char *argv[] = {cmd_path, arg, NULL};
+			execve(cmd_path, argv, environ);
+			perror("execve failed");
+			exit(1); }
+		else
+			wait(NULL);
 		free(cmd_path);
 	}
-	free_args(args); /* Free the dynamically allocated memory */
 }
