@@ -27,9 +27,9 @@ int main(int argc, char **argv, char **environ)
 			}
 			_strcpy(command, line); /* Copy the line. */
 			handle_command(command, environ); /* Handle the command. */
-			free(line); /* Free the memory allocated by getline. */
-			line = NULL; /* Prevent dangling pointers. */
-			break; /* Exit the loop after executing the command. */
+		/*	free(line);*/ /* Free the memory allocated by getline. */
+		/*	line = NULL;*/ /* Prevent dangling pointers. */
+		/*	break;*/ /* Exit the loop after executing the command. */
 		}
 	}
 	else
@@ -39,12 +39,15 @@ int main(int argc, char **argv, char **environ)
 		fflush(stdout); /* Flush the output buffer. */
 		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
+			if (nread > 0)
+			{
 			_strcpy(command, line); /* Copy the line to the command buffer. */
 			handle_command(command, environ); /* Handle the command. */
-			_print(SHELL_PROMPT); /* Print the shell prompt. */
+			}
+				_print(SHELL_PROMPT); /* Print the shell prompt. */
 			fflush(stdout); /* Flush the output buffer. */
-			free(line); /* Free the memory allocated by getline. */
-			line = NULL; /* Reset the pointer to NULL to prevent dangling pointers. */
+		/*	free(line);*/ /* Free the memory allocated by getline. */
+		/*	line = NULL;*/ /* Reset the pointer to NULL to prevent dangling pointers. */
 		}
 	}
 	free(line); /* Free any remaining memory at the end of the program. */

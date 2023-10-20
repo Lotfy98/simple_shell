@@ -100,12 +100,12 @@ void handle_ls(char **args, char **environ)
 		return;
 	}
 	if (pid == 0) /* If this is the child process, execute the ls command. */
-	{
+{
 		execve("/bin/ls", args, environ);
 		/* If execve returns, it must have failed. */
 		perror("execve failed");
 		exit(1); /* Exit with a failure status. */
 	}
 	else /* This is the parent process. Wait for the child to finish. */
-		wait(NULL);
-}
+	wait(NULL);
+	}

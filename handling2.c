@@ -74,4 +74,28 @@ char *_strdup(char *str)
 	_memcpy(xx, str, x);
 	return (xx);
 }
+#include <stdlib.h> // For malloc and free
+#include <string.h> // For strcpy and strcat
 
+int setenv_custom(char *var, char *value) {
+    if (!var || !value) {
+        return 0; // Invalid input
+    }
+
+    char *env_var = malloc(strlen(var) + strlen(value) + 2);
+    if (!env_var) {
+        return 1; // Memory allocation error
+    }
+
+    strcpy(env_var, var);
+    strcat(env_var, "=");
+    strcat(env_var, value);
+
+    if (putenv(env_var) != 0) {
+        free(env_var);
+        return 1; // Error setting the environment variable
+    }
+
+    free(env_var);
+    return 0;
+}
