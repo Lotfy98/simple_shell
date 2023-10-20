@@ -18,13 +18,12 @@ int main(int argc, char **argv, char **environ)
 
 	if (!isatty(STDIN_FILENO))
 	{
-		if ((nread = _getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			if (nread != 0)
 			{
 				_strcpy(command, line);
 				handle_command(command, environ);
-
 				free(line);
 				line = NULL;
 			}
@@ -47,5 +46,6 @@ int main(int argc, char **argv, char **environ)
 	}
 	if (line != NULL)
 		free(line);
+
 	return (0);
 }
