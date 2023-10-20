@@ -1,5 +1,5 @@
 Simple Shell Team Project
-Overview
+Overview..
 Briefly describe the purpose and goal of your Simple Shell project.
 What is the objective of the project? What problem does it aim to solve?
 What is the motivation behind creating a custom shell?
