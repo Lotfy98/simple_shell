@@ -18,7 +18,7 @@ int main(int argc, char **argv, char **environ)
 
 	if (!isatty(STDIN_FILENO))
 	{
-		while ((nread = getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			if (nread == 0)
 			{
@@ -37,7 +37,7 @@ int main(int argc, char **argv, char **environ)
 		signal(SIGINT, handle_sigint); /* Handle SIGINT signal (Ctrl+C). */
 		_print(SHELL_PROMPT); /* Print the shell prompt. */
 		fflush(stdout); /* Flush the output buffer. */
-		while ((nread = getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			_strcpy(command, line); /* Copy the line to the command buffer. */
 			handle_command(command, environ); /* Handle the command. */
