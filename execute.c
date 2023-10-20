@@ -27,7 +27,6 @@ Command *getCommand()
 	/* Define a static array of Command structs. */
 	static Command commands[] = {
 		{"ls", handle_ls}, /* ls command */
-		{"cp", handle_cp}, /* cp command */
 		{"cd", handle_cd}, /* cd command */
 		{"exit", handle_exit}, /* exit command */
 		{"env", handle_env}, /* env command */

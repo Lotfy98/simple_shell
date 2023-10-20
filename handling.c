@@ -20,19 +20,50 @@ void handle_sigint(int sig)
 }
 /**
  * handle_cd - Changes the current working directory.
- * @args: Null-terminated array of arguments for the command.
- * @environ: Null-terminated array of environment variables (unused).
- *
- * Return: Void.
+ * @args: Null-terminated array of arguments
+ * @environ: The environment variable array.
  */
 void handle_cd(char **args, char **environ)
 {
-
+	char current_dir[4096];
 	(void)environ; /* Unused variable. */
 
-	if (chdir(args[1]) != 0) /*If changing directory fails, print error message*/
+	if (args[1] == NULL)
 	{
-		perror("cd failed");
+		/* If no directory argument is provided, change to user's home directory. */
+		const char *home_dir = _getenv("HOME", environ);
+
+		if (home_dir == NULL)
+		{
+			write(STDERR_FILENO, "cd: HOME not set\n", _strlen("cd: HOME not set\n"));
+			return;
+		}
+		if (chdir(home_dir) != 0)
+		{
+			write(STDERR_FILENO, "cd failed: ", _strlen("cd failed: "));
+			perror("");
+		}
+	}
+	else
+	{
+		/* Change to the specified directory. */
+		if (chdir(args[1]) != 0)
+		{
+			write(STDERR_FILENO, "cd failed: ", strlen("cd failed: "));
+			perror("");
+		}
+	}
+
+	/* Update the environment variable PWD. */
+
+	if (getcwd(current_dir, sizeof(current_dir)) != NULL)
+	{
+		setenv("PWD", current_dir, 1);
+	}
+	else
+	{
+		write(STDERR_FILENO, "getcwd failed: ", strlen("getcwd failed: "));
+		perror("");
 	}
 }
 /**
