@@ -56,21 +56,25 @@ void execute_command(char *cmd, char **args, char **environ)
 		return;
 
 	}
-	pid = fork(); /* Create a child process. */
-	if (pid < 0) /* If fork failed, print an error message and return. */
+
+	pid = fork();
+
+	if (pid < 0)
 	{
 		perror("fork failed");
 		return;
 	}
-	else if (pid == 0) /* If this is the child process, execute the command. */
+	else if (pid == 0)
 	{
 		execve(cmd, args, environ);
-		/* If execve returns, it must have failed. */
+
 		perror("execve failed");
-		exit(1); /* Exit with a failure status. */
+		exit(1);
 	}
 	else
+	{
 		wait(&status);
+	}
 }
 
 /**
@@ -91,43 +95,39 @@ i* This function handles a given command. It trims the command,
 void handle_command(char *command, char **environ)
 {
 	Command *commands;
-	char *trimmed_command = trim(command); /* Trim leading and trailing spaces */
-	char *cmd_path, *cmd = NULL;
-	char **args;
+	char *trimmed_command = trim(command);
+	char *cmd_path, *cmd, *arg;
+	char *args[64];
 	int i;
 
 	trimmed_command[_strlen(trimmed_command)] = '\0';
-	while (cmd == NULL && _strlen(trimmed_command) > 0)
-	{
-		cmd = _strtok(trimmed_command, " \t\n");
-		trimmed_command = trimmed_command + _strlen(cmd) + 1;
-	}
-	if (cmd == NULL)
+	if (_strlen(trimmed_command) == 0)
 		return;
-	args = parse_args(cmd);
+	cmd = _strtok(trimmed_command, " \t\n");
+	args[0] = cmd;
+	i = 1;
+	while ((arg = _strtok(NULL, " \t\n")) != NULL)
+		args[i++] = arg;
+	args[i] = NULL;
 	commands = getCommand();
 	for (i = 0; commands[i].name != NULL; i++)
 	{
 		if (_strcmp(cmd, commands[i].name) == 0)
 		{
 			commands[i].func(args, environ);
-			free_args(args); /* Free the dynamically allocated memory */
-			return;
-		}
+			return; }
 	}
 	if (cmd[0] == '/')
 		execute_command(cmd, args, environ);
 	else
-	{ cmd_path = _getpath(cmd, environ);
+	{
+		cmd_path = _getpath(cmd, environ);
 		if (cmd_path == NULL)
 		{
 			_print("Command not found: ");
 			_print(cmd);
 			_print("\n");
-			free_args(args); /* Free the dynamically allocated memory */
 			return; }
 		execute_command(cmd_path, args, environ);
-		free(cmd_path);
-	}
-	free_args(args); /* Free the dynamically allocated memory */
+		free(cmd_path); }
 }
