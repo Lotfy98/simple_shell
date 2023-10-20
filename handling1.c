@@ -82,11 +82,20 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	if (*lineptr == NULL)
 	{
 		*lineptr = malloc(MAX_COMMAND_LENGTH);
-		*n = MAX_COMMAND_LENGTH; }
+		*n = MAX_COMMAND_LENGTH;
+	}
 	i = 0;
 	skip_spaces = 1;
-	while ((c = _getchar(stream)) != '\n')
+	while (1)
 	{
+		c = _getchar(stream);
+		if (c == '\n' || c == 0 || c == EOF)
+		{
+			while (i > 0 && (*lineptr)[i - 1] == ' ')
+				i--;
+			(*lineptr)[i] = '\0';
+			return ((ssize_t)i);
+		}
 		if (i >= *n - 1)
 		{
 			old_n = *n;
@@ -95,17 +104,14 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 			if (new_lineptr == NULL)
 			{
 				free(*lineptr);
-				return (-1); }
-			*lineptr = new_lineptr; }
+				return (-1);
+			}
+			*lineptr = new_lineptr;
+		}
 		if (skip_spaces && c == ' ')
 			continue;
 		else
 			skip_spaces = 0;
 		(*lineptr)[i++] = c;
 	}
-	while (i > 0 && (*lineptr)[i - 1] == ' ')
-		i--;
-
-	(*lineptr)[i] = '\0';
-	return ((ssize_t)i);
 }

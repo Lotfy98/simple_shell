@@ -172,7 +172,7 @@ char _getchar(FILE *stream)
 		return (-1);
 	}
 	else if (bytesRead == 0)
-		return (EOF);
+		return (0);
 	else
 		return (c);
 }

@@ -18,7 +18,7 @@ int main(int argc, char **argv, char **environ)
 
 	if (!isatty(STDIN_FILENO))
 	{
-		while ((nread = _getline(&line, &len, stdin)) != -1)
+		while ((nread = _getline(&line, &len, stdin)) > 0)
 		{
 			if (nread != 0)
 			{
@@ -27,8 +27,8 @@ int main(int argc, char **argv, char **environ)
 				free(line);
 				line = NULL;
 			}
-			break;
 		}
+		exit(0);
 	}
 	else
 	{
