@@ -32,15 +32,20 @@ char *_memcpy(char *dest, char *src, unsigned int n)
  */
 char *trim(char *str)
 {
+	char *start = str;
 	char *end;
 
-	while (_isspace((unsigned char)*str))
-		str++;
+	/* Trim leading spaces */
+	while (*start && _isspace((unsigned char)*start))
+		start++;
+
+	/* Trim trailing spaces */
 	end = str + _strlen(str) - 1;
-	while (end > str && _isspace((unsigned char)*end))
+	while (end > start && _isspace((unsigned char)*end))
 		end--;
 	*(end + 1) = '\0';
-	return (str);
+
+	return (start);
 }
 /**
  * _strdup - function to duplicate a string

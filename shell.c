@@ -25,7 +25,6 @@ int main(int argc, char **argv, char **environ)
 				free(line);
 				break;
 			}
-
 			_strcpy(command, line); /* Copy the line. */
 			handle_command(command, environ); /* Handle the command. */
 			free(line); /* Free the memory allocated by getline. */
@@ -38,7 +37,6 @@ int main(int argc, char **argv, char **environ)
 		signal(SIGINT, handle_sigint); /* Handle SIGINT signal (Ctrl+C). */
 		_print(SHELL_PROMPT); /* Print the shell prompt. */
 		fflush(stdout); /* Flush the output buffer. */
-		/* Read lines until EOF. */
 		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
 			_strcpy(command, line); /* Copy the line to the command buffer. */

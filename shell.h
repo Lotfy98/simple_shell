@@ -14,6 +14,7 @@
 #define MAX_PATH_LENGTH 256
 #define MAX_COMMAND_LENGTH 1024
 #define SHELL_PROMPT "($) "
+#include <stdint.h>
 
 
 void handle_cp(char **args, char **environ);
@@ -26,7 +27,7 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 char *_strdup(char *str);
 int _strlen(char *s);
 int _strncmp(const char *str1, const char *str2, size_t n);
-char* _strcpy(char* dest, const char* src);
+char *_strcpy(char *dest, const char *src);
 char *_strcat(char *dest, char *src);
 char _getchar(FILE *stream);
 int _atoi(char *s);
@@ -43,6 +44,8 @@ int _isspace(char c);
 void execute_command(char *cmd, char **arg, char **environ);
 void handle_env(char **args, char **environ);
 void handle_cp(char *args[], char **environ);
+char** parse_args(char* cmd);
+void free_args(char** args);
 
 /**
  * struct Command - Defines a command and its corresponding function

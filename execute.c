@@ -45,35 +45,31 @@ Command *getCommand()
  */
 void execute_command(char *cmd, char **args, char **environ)
 {
-    pid_t pid;
-    int status;
+	pid_t pid;
+	int status;
 
-    if (access(cmd, X_OK) == -1)
-    {
-        write(STDOUT_FILENO, "Command '", 9);
-        write(STDOUT_FILENO, cmd, _strlen(cmd));
-        write(STDOUT_FILENO, "' does not exist.\n", 18);
-        return;
-    }
-
-    pid = fork(); /* Create a child process. */
-
-    if (pid < 0) /* If fork failed, print an error message and return. */
-    {
-        perror("fork failed");
-        return;
-    }
-    else if (pid == 0) /* If this is the child process, execute the command. */
-    {
-        execve(cmd, args, environ);
-        /* If execve returns, it must have failed. */
-        perror("execve failed");
-        exit(1); /* Exit with a failure status. */
-    }
-    else /* This is the parent process. Wait for the child to finish. */
-    {
-        wait(&status);
-    }
+	if (access(cmd, X_OK) == -1)
+	{
+		write(STDOUT_FILENO, "Command '", 9);
+		write(STDOUT_FILENO, cmd, _strlen(cmd));
+		write(STDOUT_FILENO, "' does not exist.\n", 18);
+		return;
+	}
+	pid = fork(); /* Create a child process. */
+	if (pid < 0) /* If fork failed, print an error message and return. */
+	{
+		perror("fork failed");
+		return;
+	}
+	else if (pid == 0) /* If this is the child process, execute the command. */
+	{
+		execve(cmd, args, environ);
+		/* If execve returns, it must have failed. */
+		perror("execve failed");
+		exit(1); /* Exit with a failure status. */
+	}
+	else
+		wait(&status);
 }
 /**
  * handle_command - Function to handle commands
@@ -94,34 +90,31 @@ void handle_command(char *command, char **environ)
 {
 	Command *commands;
 	char *trimmed_command = trim(command); /* Trim leading and trailing spaces */
-	char *cmd_path, *cmd, *arg;
-	char **args = malloc(MAX_ARGS * sizeof(char*)); /* Dynamically allocate memory for args */
-	int i = 0;
+	char *cmd_path, *cmd = NULL;
+	char **args;
+	int i;
 
 	trimmed_command[_strlen(trimmed_command)] = '\0';
 
-	if (_strlen(trimmed_command) == 0) {
-		free(args); /* Free the dynamically allocated memory */
+	/* Use whitespace as delimiter and continue until a non-NULL command is found */
+	while (cmd == NULL && _strlen(trimmed_command) > 0) {
+		cmd = _strtok(trimmed_command, " \t\n");
+		trimmed_command = trimmed_command + _strlen(cmd) + 1;
+	}
+
+	/* Check if cmd is NULL before proceeding */
+	if (cmd == NULL) {
 		return;
 	}
 
-	cmd = _strtok(trimmed_command, " \t\n"); /* Use whitespace as delimiter */
-	args[i++] = cmd;
-
-	while ((arg = _strtok(NULL, " \t\n")) != NULL) { /* Use whitespace as delimiter */
-		args[i] = malloc((strlen(arg) + 1) * sizeof(char)); /* Dynamically allocate memory for each argument */
-		strcpy(args[i], arg);
-		i++;
-	}
-
-	args[i] = NULL; /* Properly terminate the args array */
+	args = parse_args(cmd);
 
 	commands = getCommand();
 
 	for (i = 0; commands[i].name != NULL; i++) {
 		if (_strcmp(cmd, commands[i].name) == 0) {
 			commands[i].func(args, environ);
-			free(args); /* Free the dynamically allocated memory */
+			free_args(args); /* Free the dynamically allocated memory */
 			return;
 		}
 	}
@@ -134,17 +127,12 @@ void handle_command(char *command, char **environ)
 			_print("Command not found: ");
 			_print(cmd);
 			_print("\n");
-			free(args); /* Free the dynamically allocated memory */
+			free_args(args); /* Free the dynamically allocated memory */
 			return;
 		}
 		execute_command(cmd_path, args, environ); /* Execute the command with cmd_path */
 		free(cmd_path); /* Free cmd_path to prevent memory leaks */
 	}
 
-	/* Free the dynamically allocated memory for each argument */
-	for (i = 1; args[i] != NULL; i++) {
-		free(args[i]);
-	}
-
-	free(args); /* Free the dynamically allocated memory */
+	free_args(args); /* Free the dynamically allocated memory */
 }
