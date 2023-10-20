@@ -9,36 +9,37 @@
  */
 int main(int argc, char **argv, char **environ)
 {
-	char command[MAX_COMMAND_LENGTH]; /* Command buffer. */
-	char *line = NULL; /* Line buffer. */
-	size_t len = 0; /* Length of the line. */
-	ssize_t nread; /* Number of characters read. */
-	(void)argc; /* Unused variable. */
-	(void)argv; /* Unused variable. */
+	char command[MAX_COMMAND_LENGTH];
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t nread;
+	(void)argc; 
+	(void)argv; 
 
 	if (!isatty(STDIN_FILENO))
 	{
-		while ((nread = _getline(&line, &len, stdin)) != -1)
+		if ((nread = _getline(&line, &len, stdin)) != -1)
 		{
-			if (nread == 0)
+			if (nread != 0)
 			{
+				_strcpy(command, line);
+				handle_command(command, environ);
+
 				free(line);
-				break;
+				line = NULL;
 			}
+<<<<<<< HEAD
 			_strcpy(command, line); /* Copy the line. */
 			handle_command(command, environ); /* Handle the command. */
 		/*	free(line);*/ /* Free the memory allocated by getline. */
 		/*	line = NULL;*/ /* Prevent dangling pointers. */
 		/*	break;*/ /* Exit the loop after executing the command. */
+=======
+>>>>>>> c594e3f56a1f4c1324459aa5e163b05f92c891fd
 		}
-	}
-	else
-	{ /* If input is from a terminal... */
-		signal(SIGINT, handle_sigint); /* Handle SIGINT signal (Ctrl+C). */
-		_print(SHELL_PROMPT); /* Print the shell prompt. */
-		fflush(stdout); /* Flush the output buffer. */
-		while ((nread = _getline(&line, &len, stdin)) != -1)
+		else
 		{
+<<<<<<< HEAD
 			if (nread > 0)
 			{
 			_strcpy(command, line); /* Copy the line to the command buffer. */
@@ -47,9 +48,23 @@ int main(int argc, char **argv, char **environ)
 				_print(SHELL_PROMPT); /* Print the shell prompt. */
 			fflush(stdout); /* Flush the output buffer. */
 		/*	free(line);*/ /* Free the memory allocated by getline. */
-		/*	line = NULL;*/ /* Reset the pointer to NULL to prevent dangling pointers. */
+		/*	line = NULL;*/ /* Reset the pointer to NULL to prevent dangling poi
+			signal(SIGINT, handle_sigint);
+			_print(SHELL_PROMPT);
+			fflush(stdout);
+			while ((nread = _getline(&line, &len, stdin)) != -1)
+			{
+				_strcpy(command, line);
+				handle_command(command, environ);
+				_print(SHELL_PROMPT);
+				fflush(stdout);
+				free(line);
+				line = NULL;
+			}
+>>>>>>> c594e3f56a1f4c1324459aa5e163b05f92c891fd
 		}
+		if (line != NULL)
+		free(line);
 	}
-	free(line); /* Free any remaining memory at the end of the program. */
-	return (0); /* Return success status. */
+	return (0);
 }
