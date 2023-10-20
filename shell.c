@@ -13,8 +13,8 @@ int main(int argc, char **argv, char **environ)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
-	(void)argc; 
-	(void)argv; 
+	(void)argc;
+	(void)argv;
 
 	if (!isatty(STDIN_FILENO))
 	{
@@ -29,23 +29,23 @@ int main(int argc, char **argv, char **environ)
 				line = NULL;
 			}
 		}
-		else
+	}
+	else
+	{
+		signal(SIGINT, handle_sigint);
+		_print(SHELL_PROMPT);
+		fflush(stdout);
+		while ((nread = _getline(&line, &len, stdin)) != -1)
 		{
-			signal(SIGINT, handle_sigint);
+			_strcpy(command, line);
+			handle_command(command, environ);
 			_print(SHELL_PROMPT);
 			fflush(stdout);
-			while ((nread = _getline(&line, &len, stdin)) != -1)
-			{
-				_strcpy(command, line);
-				handle_command(command, environ);
-				_print(SHELL_PROMPT);
-				fflush(stdout);
-				free(line);
-				line = NULL;
-			}
+			free(line);
+			line = NULL;
 		}
-		if (line != NULL)
-		free(line);
 	}
+	if (line != NULL)
+		free(line);
 	return (0);
 }
