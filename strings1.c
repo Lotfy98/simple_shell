@@ -152,6 +152,7 @@ int _atoi(char *s)
 }
 /**
  *_getchar - reads a single character from the standard input
+ * @stream: stdin
  * Description: This function uses the read system call to read a single
  *character from the standard input (file descriptor STDIN_FILENO).
  * It stores the read character in a local variable and returns it.
