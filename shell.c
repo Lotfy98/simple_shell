@@ -26,6 +26,7 @@ int main(int argc, char **argv, char **environ)
 				handle_command(command, environ);
 				free(line);
 				line = NULL;
+				break;
 			}
 		}
 	}
