@@ -54,6 +54,7 @@ void execute_command(char *cmd, char **args, char **environ)
 		write(STDOUT_FILENO, cmd, _strlen(cmd));
 		write(STDOUT_FILENO, "' does not exist.\n", 18);
 		return;
+
 	}
 	pid = fork(); /* Create a child process. */
 	if (pid < 0) /* If fork failed, print an error message and return. */
@@ -71,6 +72,7 @@ void execute_command(char *cmd, char **args, char **environ)
 	else
 		wait(&status);
 }
+
 /**
  * handle_command - Function to handle commands
  * @command: The command to handle
