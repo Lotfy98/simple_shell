@@ -30,7 +30,7 @@ char *_getenv(char *name, char **environ)
  */
 char *_getpath(char *cmd, char **environ)
 {
-	char file_path[MAX_PATH_LENGTH];
+	char file_path[MAX_PATH_LENGTH] = "";
 	char *path = _getenv("PATH", environ), *path_copy, *dir;
 
 	if (path == NULL)
@@ -79,39 +79,38 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 	char c, *new_lineptr;
 	int skip_spaces;
 
+	i = 0;
+	skip_spaces = 1;
 	if (*lineptr == NULL)
 	{
 		*lineptr = malloc(MAX_COMMAND_LENGTH);
-		*n = MAX_COMMAND_LENGTH;
-	}
+		*n = MAX_COMMAND_LENGTH; }
 	i = 0;
 	skip_spaces = 1;
-	while (1)
+while (1)
+{
+	c = _getchar(stream);
+	if (c == '\n' || c == 0 || c == EOF)
 	{
-		c = _getchar(stream);
-		if (c == '\n' || c == 0 || c == EOF)
+		while (i > 0 && (*lineptr)[i - 1] == ' ')
+			i--;
+		(*lineptr)[i] = '\0';
+		return ((ssize_t)i); }
+	if (i >= *n - 1)
+	{ old_n = *n;
+		*n *= 2;
+		new_lineptr = _realloc(*lineptr, old_n, *n);
+		if (new_lineptr == NULL)
 		{
-			while (i > 0 && (*lineptr)[i - 1] == ' ')
-				i--;
-			(*lineptr)[i] = '\0';
-			return ((ssize_t)i);
-		}
-		if (i >= *n - 1)
-		{
-			old_n = *n;
-			*n *= 2;
-			new_lineptr = _realloc(*lineptr, old_n, *n);
-			if (new_lineptr == NULL)
-			{
-				free(*lineptr);
-				return (-1);
-			}
-			*lineptr = new_lineptr;
-		}
+			free(*lineptr);
+			return (-1); }
+		*lineptr = new_lineptr;
+	}
 		if (skip_spaces && c == ' ')
 			continue;
 		else
 			skip_spaces = 0;
 		(*lineptr)[i++] = c;
 	}
+
 }

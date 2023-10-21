@@ -44,9 +44,7 @@ int _isspace(char c);
 void execute_command(char *cmd, char **arg, char **environ);
 void handle_env(char **args, char **environ);
 void handle_cp(char *args[], char **environ);
-char **parse_args(char *cmd);
-void free_args(char **args);
-
+void free_memory(void **ptr);
 /**
  * struct Command - Defines a command and its corresponding function
  * @name: Name of the command as a string

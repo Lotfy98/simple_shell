@@ -21,32 +21,31 @@ int main(int argc, char **argv, char **environ)
 		while ((nread = _getline(&line, &len, stdin)) > 0)
 		{
 			if (nread != 0)
-			{
-				_strcpy(command, line);
-				handle_command(command, environ);
-				free(line);
-				line = NULL;
-			}
+			{ _strcpy(command, line);
+				handle_command(command, environ); }
+			free_memory((void **)&line);
+			line = NULL;
+			if (nread != -1)
+			{ line = malloc(MAX_COMMAND_LENGTH);
+				len = MAX_COMMAND_LENGTH; }
 		}
-		exit(0);
 	}
 	else
-	{
-		signal(SIGINT, handle_sigint);
+	{ signal(SIGINT, handle_sigint);
 		_print(SHELL_PROMPT);
 		fflush(stdout);
 		while ((nread = _getline(&line, &len, stdin)) != -1)
-		{
-			_strcpy(command, line);
+		{ _strcpy(command, line);
 			handle_command(command, environ);
 			_print(SHELL_PROMPT);
 			fflush(stdout);
-			free(line);
+			free_memory((void **)&line);
 			line = NULL;
+			if (nread != -1)
+			{ line = malloc(MAX_COMMAND_LENGTH);
+				len = MAX_COMMAND_LENGTH; }
 		}
 	}
-	if (line != NULL)
-		free(line);
-
+	free_memory((void **)&line);
 	return (0);
 }
