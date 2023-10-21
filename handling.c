@@ -62,7 +62,7 @@ void handle_cd(char **args, char **environ)
 	}
 	else
 	{
-		write(STDERR_FILENO, "getcwd failed: ", strlen("getcwd failed: "));
+		write(STDERR_FILENO, "getcwd failed: ", _strlen("getcwd failed: "));
 		perror("");
 	}
 }
