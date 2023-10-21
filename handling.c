@@ -75,12 +75,15 @@ void handle_cd(char **args, char **environ)
  */
 void handle_exit(char **args, char **environ)
 {
-	int status = 0;
-	(void)environ;
+int status = 0;
+(void)environ;
 
-	if (args[1] != NULL)
-		status = _atoi(args[1]);
-	exit(status);
+if (args[1] != NULL)
+status = _atoi(args[1]);
+else
+status = 0;
+
+exit(status);
 }
 /**
  * handle_ls - Executes the ls command in a child process.
